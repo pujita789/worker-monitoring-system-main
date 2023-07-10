@@ -5,11 +5,17 @@ import 'react-toastify/dist/ReactToastify.css';
 import logo from '../../assets/logo.png';
 
 const Login = () => {
+  
+  // eslint-disable-next-line no-unused-vars
+
+  
   const [passShow, setPassShow] = useState(false);
+  
   const [inpval, setInpval] = useState({
     email: '',
     password: '',
   });
+  
   const history = useNavigate();
 
   useEffect(() => {
@@ -135,4 +141,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Login;   
