@@ -3,25 +3,43 @@ import { NavLink } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import zxcvbn from 'zxcvbn';//npm package for strong password reccommendations.
+
 const Register = () => {
+
+  
+  //state variable for password visibility.
   const [passShow, setPassShow] = useState(false);
   const [cpassShow, setCPassShow] = useState(false);
 
+  
+//state variable for input variables
   const [inpval, setInpval] = useState({
-    fname: "",
-    email: "",
-    password: "",
-    cpassword: ""
+    fname: '',
+    email: '',
+    password: '',
+    cpassword: ''
+  });
+
+  // state variable for strong password
+  const [passwordStrength, setPasswordStrength] = useState({
+    score: 0,
+    feedback: ''
   });
 
   const setVal = (e) => {
     const { name, value } = e.target;
 
+    if (name === 'password') {
+      const { score, feedback } = zxcvbn(value);
+      setPasswordStrength({ score, feedback });
+    }
+
     setInpval((prevState) => {
       return {
         ...prevState,
         [name]: value
-      }
+      };
     });
   };
 
@@ -30,59 +48,62 @@ const Register = () => {
 
     const { fname, email, password, cpassword } = inpval;
 
-    if (fname === "") {
-      toast.warning("fname is required!", {
-        position: "top-center"
+    if (fname === '') {
+      toast.warning('Name is required!', {
+        position: 'top-center'
       });
-    } else if (email === "") {
-      toast.error("email is required!", {
-        position: "top-center"
+    } else if (email === '') {
+      toast.error('Email is required!', {
+        position: 'top-center'
       });
-    } else if (!email.includes("@")) {
-      toast.warning("includes @ in your email!", {
-        position: "top-center"
+    } else if (!email.includes('@')) {
+      toast.warning('Include @ in your email!', {
+        position: 'top-center'
       });
-    } else if (password === "") {
-      toast.error("password is required!", {
-        position: "top-center"
+    } else if (password === '') {
+      toast.error('Password is required!', {
+        position: 'top-center'
       });
     } else if (password.length < 6) {
-      toast.error("password must be 6 char!", {
-        position: "top-center"
+      toast.error('Password must be at least 6 characters!', {
+        position: 'top-center'
       });
-    } else if (cpassword === "") {
-      toast.error("cpassword is required!", {
-        position: "top-center"
+    } else if (cpassword === '') {
+      toast.error('Confirm Password is required!', {
+        position: 'top-center'
       });
     } else if (cpassword.length < 6) {
-      toast.error("confirm password must be 6 char!", {
-        position: "top-center"
+      toast.error('Confirm Password must be at least 6 characters!', {
+        position: 'top-center'
       });
     } else if (password !== cpassword) {
-      toast.error("pass and Cpass are not matching!", {
-        position: "top-center"
+      toast.error('Password and Confirm Password do not match!', {
+        position: 'top-center'
       });
     } else {
-      const data = await fetch("/register", {
-        method: "POST",
+      const data = await fetch('/register', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json"
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          fname, email, password, cpassword
+          fname,
+          email,
+          password,
+          cpassword
         })
       });
 
       const res = await data.json();
 
       if (res.status === 201) {
-        toast.success("Registration Successfully done!", {
-          position: "top-center"
+        toast.success('Registration successfully done!', {
+          position: 'top-center'
         });
-        setInpval({ ...inpval, fname: "", email: "", password: "", cpassword: "" });
+        setInpval({ ...inpval, fname: '', email: '', password: '', cpassword: '' });
       }
     }
-  }
+  };
 
   return (
     <section className="flex justify-center bg-customColor items-center h-screen">
@@ -124,7 +145,7 @@ const Register = () => {
               <input
                 id="password"
                 name="password"
-                type={passShow ? "text" : "password"}
+                type={passShow ? 'text' : 'password'}
                 value={inpval.password}
                 onChange={setVal}
                 placeholder="Enter Your Password"
@@ -136,9 +157,12 @@ const Register = () => {
                 onClick={() => setPassShow(!passShow)}
                 className="ml-2 text-blue-500 hover:underline focus:outline-none"
               >
-                {passShow ? "Hide" : "Show"}
+                {passShow ? 'Hide' : 'Show'}
               </button>
             </div>
+            {passwordStrength.feedback && (
+              <p className="text-xs mt-2 text-red-500">{passwordStrength.feedback.warning}</p>
+            )}
           </div>
           <div className="mt-4">
             <label htmlFor="cpassword">Confirm Password</label>
@@ -146,7 +170,7 @@ const Register = () => {
               <input
                 id="cpassword"
                 name="cpassword"
-                type={cpassShow ? "text" : "password"}
+                type={cpassShow ? 'text' : 'password'}
                 value={inpval.cpassword}
                 onChange={setVal}
                 placeholder="Confirm Password"
@@ -158,7 +182,7 @@ const Register = () => {
                 onClick={() => setCPassShow(!cpassShow)}
                 className="ml-2 text-blue-500 hover:underline focus:outline-none"
               >
-                {cpassShow ? "Hide" : "Show"}
+                {cpassShow ? 'Hide' : 'Show'}
               </button>
             </div>
           </div>
@@ -171,15 +195,15 @@ const Register = () => {
           </button>
         </form>
         <p className="text-sm text-center mt-4">
-          Already have an account?{" "}
+          Already have an account?{' '}
           <NavLink to="/" className="text-customColorTwo font-bold hover:underline">
             Log In
-          </NavLink>{" "}
+          </NavLink>
         </p>
       </div>
       <ToastContainer />
     </section>
   );
-}
+};
 
 export default Register;
