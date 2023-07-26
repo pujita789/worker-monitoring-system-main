@@ -1,0 +1,8 @@
+/* In your CSS file or within a style tag */
+.flex-container {
+    display: flex;
+    justify-content: space-between;
+    /* This will align the children to the left and right edges */
+    height: 100vh;
+    /* To make the container fill the whole height of the viewport */
+}
